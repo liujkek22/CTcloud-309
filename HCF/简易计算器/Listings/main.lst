@@ -1,0 +1,349 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2023 09:07:45 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Keil v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\hardware) DEBUG OBJECTEXTEND PR
+                    -INT(.\Listings\main.lst) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          /*
+   2          接盘按键说明：
+   3          --------------------------------------------------
+   4                      |  1  |  2  |  3  |  +  |  
+   5                      - - - - - - - - - - - - -
+   6                      |  4  |  5  |  6  |  -  |
+   7                      - - - - - - - - - - - - -
+   8                      |  7  |  8  |  9  |  *  |
+   9                      - - - - - - - - - - - - -
+  10                                        | 0   |  CE |  =  |  /  | 
+  11          --------------------------------------------------*/
+  12          //操作简介
+  13          // 按第一个数，再按'+-*/',再按'='显示出结果，然后按C清屏
+  14          // 加最大9999+9999=19998
+  15          // 减最大9999-0   =9999
+  16          // 乘最大9999*9999=99980001
+  17          // 除 1/9=0.1111 保留小数点后4位
+  18          #include<reg52.h>
+  19          #define uint unsigned int
+  20          #define uchar unsigned char
+  21                  
+  22          //--------LCD1602-------------------
+  23          //P00-07==== D0-7
+  24          sbit rs=P0^0;
+  25          sbit rw=P0^1;
+  26          sbit lcden=P0^2;
+  27          //--------LCD1602-------------------
+  28          //--------KEY-----------------------
+  29          //P1口
+  30          //--------KEY-----------------------
+  31          uchar code table[]="                ";
+  32          
+  33          long int data_a,data_b;//第一个数和第二个数
+  34          long int data_c;//计算结果
+  35          
+  36          uchar display[10];//  显示缓冲
+  37          
+  38          
+  39          
+  40          void delay_ms(uint x)
+  41          {
+  42   1              uint i,j;
+  43   1              for(i=x;i>0;i--)//执行x次循环
+  44   1              {
+  45   2                      for(j=110;j>0;j--);//执行110次循环
+  46   2              }
+  47   1      }
+  48          
+  49          void delay_us(uint t)
+  50          {
+  51   1          while(t--);     //t=0 ，退出
+  52   1      }
+  53          
+  54          
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2023 09:07:45 PAGE 2   
+
+  55          //************************************************************************/
+  56          // 描述：1602液晶写指令
+  57          //************************************************************************/
+  58          void write_com(uchar com)  //1602液晶写指令
+  59          {
+  60   1          rs=0;                    //写指令
+  61   1              lcden=0;                 //关使能
+  62   1              P2=com;                  //写入指令com
+  63   1              delay_ms(1);             //延时1ms
+  64   1              lcden=1;                 //使能1602
+  65   1              delay_ms(2);             //延时2ms
+  66   1              lcden=0;                 //关使能
+  67   1      }
+  68          
+  69          //************************************************************************/
+  70          //描述：1602液晶写数据
+  71          //************************************************************************/
+  72          void write_date(uchar date)//1602液晶写数据
+  73          {
+  74   1          rs=1;                    //写数据
+  75   1              lcden=0;                 //关使能 
+  76   1              P2=date;                 //写入数据date
+  77   1              delay_ms(1);             //延时1ms
+  78   1              lcden=1;                 //使能1602
+  79   1              delay_ms(2);             //延时2ms
+  80   1              lcden=0;                 //关使能
+  81   1      }
+  82          
+  83          //************************************************************************/
+  84          // 描述：指定x,y写入字符函数
+  85          //************************************************************************/
+  86          void W_lcd(unsigned char x,unsigned char y,unsigned char Data)
+  87          {
+  88   1         if(y==0){write_com(0x80+x);} //第一行
+  89   1         else{write_com(0xc0+x);}     //第二行
+  90   1         write_date(Data);            //写入数据 
+  91   1      }       
+  92          //指定x,y写入字符串函数
+  93          void LCD_Write_String(unsigned char x,unsigned char y,unsigned char *s)
+  94          {
+  95   1        if(y==0){write_com(0x80+x);} //第一行
+  96   1         else{write_com(0xc0+x);}    //第二行
+  97   1              while(*s)
+  98   1              {write_date(*s);s++;}        //写入数据
+  99   1      
+ 100   1      }       
+ 101          
+ 102          //************************************************************************/
+ 103          // 描述：初始化液晶，及画面初始化
+ 104          //************************************************************************/
+ 105          void init_lcd(void)             //初始化液晶，及画面初始化
+ 106          {
+ 107   1          rw=0;                        //写液晶
+ 108   1              lcden=0;                      //使能1602        
+ 109   1              write_com(0x38);              //8位总线，双行显示，5×7的点阵字符  
+ 110   1              delay_us(100);                //延时100us
+ 111   1              write_com(0x0c);              //开显示，无光标，光标不闪烁
+ 112   1              write_com(0x06);              //光标右移动
+ 113   1              write_com(0x01);              //清屏
+ 114   1              write_com(0x80);              //DD RAM 地址归0
+ 115   1      
+ 116   1      }
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2023 09:07:45 PAGE 3   
+
+ 117          
+ 118          //************************************************************************/
+ 119          //描述：反转法键盘扫描
+ 120          //************************************************************************/
+ 121          short keycheckdown()            //反转法键盘扫描
+ 122          {
+ 123   1        short temp1,temp2,temp,a=0xff;
+ 124   1              P1=0xf0;
+ 125   1              delay_ms(20);
+ 126   1              temp1=P1; //读列值
+ 127   1              P1=0xff;
+ 128   1              delay_ms(20);
+ 129   1              P1=0x0f;
+ 130   1              delay_ms(20);
+ 131   1              temp2=P1; //读行值
+ 132   1              P1=0xff;
+ 133   1              temp=(temp1&0xf0)|(temp2&0xff);//将两次读入数据组合
+ 134   1        switch(temp)                    //通过读入数据组合判断按键位置
+ 135   1      {
+ 136   2      
+ 137   2              case 0x77 :a=0xd;break;//  按键/   
+ 138   2                      case 0xb7 :a=0xe;break;// 按键= 
+ 139   2                      case 0xd7 :a=0xf;break;// 按键CE 
+ 140   2                      case 0xe7 :a=0;break;// 按键0
+ 141   2      
+ 142   2                      case 0x7b :a=0xc;break;//       按键*
+ 143   2                      case 0xbb :a=9;break; //  按键9
+ 144   2                      case 0xdb :a=8;break; //  按键8 
+ 145   2                      case 0xeb :a=7;break; //        按键7
+ 146   2      
+ 147   2                      case 0x7d :a=0xb;break;//  按键-
+ 148   2                      case 0xbd :a=6;break; //        按键6
+ 149   2                      case 0xdd :a=5;break; //        按键5
+ 150   2                      case 0xed :a=4;break; //        按键4
+ 151   2      
+ 152   2                      case 0x7e :a=0xa; break;// 按键+
+ 153   2                      case 0xbe :a=3;break;      // 按键3
+ 154   2                      case 0xde :a=2;break;      // 按键2
+ 155   2                      case 0xee :a=1;break;      // 按键1
+ 156   2      
+ 157   2                      default :a=0xff;
+ 158   2      }
+ 159   1          return a;                //返回按键值
+ 160   1      
+ 161   1      }       
+ 162          
+ 163          void display_a() //显示数据a
+ 164          {
+ 165   1        display[3]=data_a%10000/1000;    //千  
+ 166   1        display[2]=data_a%1000/100;      //百
+ 167   1              display[1]=data_a%100/10;        //十
+ 168   1              display[0]=data_a%10;            //个
+ 169   1      
+ 170   1        write_com(0x80+0);
+ 171   1              if(data_a>999){ write_date('0'+display[3]);}   //显示千位
+ 172   1              if(data_a>99){ write_date('0'+display[2]);}    //显示百位
+ 173   1              if(data_a>9){ write_date('0'+display[1]);}     //显示十位
+ 174   1                      write_date('0'+display[0]);      //显示个位
+ 175   1      }
+ 176          
+ 177          void display_b()  //显示数据b
+ 178          {
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2023 09:07:45 PAGE 4   
+
+ 179   1      
+ 180   1        write_com(0x80+7);               //第一行  
+ 181   1        display[3]=data_b%10000/1000;    //千  
+ 182   1        display[2]=data_b%1000/100;      //百
+ 183   1              display[1]=data_b%100/10;        //十
+ 184   1              display[0]=data_b%10;            //个
+ 185   1      
+ 186   1              if(data_b>999){ write_date('0'+display[3]);}   //显示千位
+ 187   1              if(data_b>99){ write_date('0'+display[2]);}    //显示百位
+ 188   1              if(data_b>9){ write_date('0'+display[1]);}     //显示十位
+ 189   1                      write_date('0'+display[0]);      //显示个位
+ 190   1      
+ 191   1      }
+ 192          
+ 193          //计算结果
+ 194          void display_c(x)
+ 195          {
+ 196   1      
+ 197   1         if(data_c<100000000&&data_c>-1)//溢出时显示错误
+ 198   1               {//display[8]=data_c%1000000000/100000000;     //万万
+ 199   2                      display[7]=data_c%100000000/10000000;           //千万
+ 200   2                      display[6]=data_c%10000000/1000000;             //百万
+ 201   2                      display[5]=data_c%1000000/100000;               //十万
+ 202   2                      display[4]=data_c%100000/10000;                         //万
+ 203   2                      display[3]=data_c%10000/1000;                           //千
+ 204   2                      display[2]=data_c%1000/100;                             //百
+ 205   2                      display[1]=data_c%100/10;                               //十
+ 206   2                      display[0]=data_c%10;                                   //个 
+ 207   2      
+ 208   2                       write_com(0x80+6+0x40);//第一行  
+ 209   2                       if(x==4)
+ 210   2                       { 
+ 211   3                              // if(data_c>99999999)  {       write_date('0'+display[8]);}    //显示万万
+ 212   3                 if(data_c>9999999)   {       write_date('0'+display[7]);}      //千万
+ 213   3                         if(data_c>999999)    {       write_date('0'+display[6]);}      //百万
+ 214   3                 if(data_c>99999)         {write_date('0'+display[5]);}        //十万
+ 215   3                                                                      write_date('0'+display[4]);    //万
+ 216   3                                                                      write_date('.');
+ 217   3                                                                      write_date('0'+display[3]);    //千
+ 218   3                                                                      write_date('0'+display[2]);    //百
+ 219   3                                                                      write_date('0'+display[1]);    //十
+ 220   3                                                                      write_date('0'+display[0]);    //个 
+ 221   3                       }
+ 222   2          else{
+ 223   3                      if(data_c>99999999)     {       write_date('0'+display[8]);}    //显示万万
+ 224   3                      if(data_c>9999999)      {       write_date('0'+display[7]);}    //千万
+ 225   3                      if(data_c>999999)       {       write_date('0'+display[6]);}    //百万
+ 226   3                      if(data_c>99999)        {       write_date('0'+display[5]);}    //十万
+ 227   3                      if(data_c>9999)         {       write_date('0'+display[4]);}    //万
+ 228   3                      if(data_c>999)          {       write_date('0'+display[3]);}    //千
+ 229   3                      if(data_c>99)           {       write_date('0'+display[2]);}    //百
+ 230   3                      if(data_c>9)            {       write_date('0'+display[1]);}    //十
+ 231   3                                                                      write_date('0'+display[0]);          //个
+ 232   3                      }
+ 233   2               }
+ 234   1           else  //溢出时显示错误
+ 235   1                 {
+ 236   2                         write_com(0x80+11+0x40); //第一行
+ 237   2                         write_date('E');         //显示 E 
+ 238   2                   write_date('r');         //显示 R
+ 239   2             write_date('r');          //显示 R
+ 240   2                         write_date('o');              //显示 O
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2023 09:07:45 PAGE 5   
+
+ 241   2                         write_date('r');              //显示 E
+ 242   2                  }    
+ 243   1               
+ 244   1      }
+ 245          
+ 246          void eql(uchar x)//加减乘除运算
+ 247          {
+ 248   1          switch(x)   //功能键选择
+ 249   1                      {
+ 250   2                        case 1:data_c=data_a+data_b;break;              //加 /* + S=1 */ /* 数值转换函数*/                                                                    
+ 251   2            case 2:if(data_a>=data_b){data_c=data_a-data_b;} /* - S=2 *///减
+ 252   2                 else{data_c=data_b-data_a;W_lcd(5,1,'-');} //负数符号
+ 253   2                                                 break;        
+ 254   2                              case 3:data_c=(data_a*data_b);break;              /* * S=3 *///乘
+ 255   2                              case 4:if(data_b==0){LCD_Write_String(0,1,"Error !");}else{data_c=(data_a*10000/data_b);}break;           /* /
+             - S=4 *///3y//除//溢出时显示错误
+ 256   2                              case 0:break;                   
+ 257   2                      }
+ 258   1      }
+ 259          
+ 260          void main()
+ 261          {
+ 262   1        uchar key=0xff;         //键值初始化
+ 263   1        uchar n=0;              //第1个数可以按1-4次
+ 264   1              uchar m=5;              //第2个数可以按1-4次
+ 265   1              uchar x=0;
+ 266   1              data_a=0;               //前一个数
+ 267   1              data_b=0;               //后一个数
+ 268   1              data_c=0;               //结果
+ 269   1              init_lcd();             //1602液晶初始化 
+ 270   1              display_a();
+ 271   1              
+ 272   1          while(1)
+ 273   1       {
+ 274   2                        key=keycheckdown();
+ 275   2                              if(key != 0xff)
+ 276   2                      {
+ 277   3                              if(key<10)
+ 278   3                              {
+ 279   4                           if(n<4){data_a=data_a*10+key;m=5;display_a();}n++;
+ 280   4                   if(m<4){data_b=data_b*10+key;n=5;display_b();}m++;
+ 281   4                              }
+ 282   3                              else
+ 283   3                              { switch(key)
+ 284   4                                {
+ 285   5                                      case 0xa:n=5;m=0;x=1;W_lcd(5,0,'+');break;
+ 286   5                      case 0xb:n=5;m=0;x=2;W_lcd(5,0,'-');break;                              
+ 287   5                                  case 0xc:n=5;m=0;x=3;W_lcd(5,0,'*');break;
+ 288   5                                      case 0xd:n=5;m=0;x=4;W_lcd(5,0,'/');break;
+ 289   5                                      case 0xe:n=5;m=5;eql(x);W_lcd(12,0,'=');display_c(x);break;
+ 290   5                                      case 0xf:n=0;m=5;x=0;data_a=0;data_b=0;data_c=0;LCD_Write_String(0,0,table);LCD_Write_String(0,1,table
+             -);W_lcd(0,0,'0');break;
+ 291   5                                }
+ 292   4                              }
+ 293   3                              do{P1=0xf0;}while(P1!=0xf0);//按键被松开
+ 294   3                      }//{0xff!=key}
+ 295   2         }//while
+ 296   1      }//main
+ 297          
+ 298          
+ 299          
+ 300          
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2023 09:07:45 PAGE 6   
+
+ 301          
+ 302          
+ 303          
+ 304          
+ 305          
+ 306          
+ 307          
+ 308          
+ 309          
+ 310          
+ 311          
+ 312          
+ 313          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   2201    ----
+   CONSTANT SIZE    =     25    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     22       9
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
