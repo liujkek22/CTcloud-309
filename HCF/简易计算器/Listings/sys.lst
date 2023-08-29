@@ -1,0 +1,39 @@
+C51 COMPILER V9.54   SYS                                                                   06/29/2023 16:33:31 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE SYS
+OBJECT MODULE PLACED IN .\Objects\sys.obj
+COMPILER INVOKED BY: D:\Keil v5\C51\BIN\C51.EXE hardware\sys.c OPTIMIZE(8,SPEED) BROWSE INCDIR(.\hardware) DEBUG OBJECTE
+                    -XTEND PRINT(.\Listings\sys.lst) TABS(2) OBJECT(.\Objects\sys.obj)
+
+line level    source
+
+   1          #include"sys.h"
+   2          
+   3          void delay_ms(uint x)
+   4          {
+   5   1        uint i,j;
+   6   1        for(i=x;i>0;i--)//执行x次循环
+   7   1        {
+   8   2          for(j=110;j>0;j--);//执行110次循环
+   9   2        }
+  10   1      }
+  11          
+  12          void delay_us(uint t)
+  13          {
+  14   1          while(t--);     //t=0 ，退出
+  15   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     41    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
