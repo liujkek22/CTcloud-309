@@ -8,6 +8,18 @@ void Control_Init(void)
     NRF24L01_Init();
     AD_Init();
     MPU6050_Init();
+    OLED_ShowPicture(1,1,128,64);
+    OLED_ShowChineseString(2,7,0,0);
+    Delay_ms(500);
+    OLED_ShowChineseString(3,7,1,1);
+    Delay_ms(500);
+    OLED_ShowChineseString(4,7,2,2);
+    Delay_ms(2500);
+    OLED_ShowChineseString(2,8,3,3);
+    OLED_ShowChineseString(3,8,4,4);
+    Delay_ms(1000);
+	OLED_Clear();
+    OLED_Base();//显示基础界面
 }
 
 
@@ -16,7 +28,7 @@ uint8_t Yao_Gan_Control(void)
     uint8_t nun = 0;
     uint8_t Buf[32] = {4, 20, 20, 20, 20};;
     Buf[2] = AD_Value[0]/100;//LY
-    Buf[1] = AD_Value[1]/100;//LX
+    Buf[1] = 40-AD_Value[1]/100;//LX
     Buf[4] = AD_Value[2]/100;//RX
     Buf[3] = AD_Value[3]/100;//RY
 	NRF24L01_SendBuf(Buf);//基础数据及其发送
@@ -41,7 +53,7 @@ uint8_t Ti_Gan_Control(void)
     OLED_ShowSignedNum(2,13,AY/200,2);
     OLED_ShowSignedNum(3,8,GZ/200,2);
     Buf[2] = (AX/200+10)*2;//LY
-    Buf[1] = 40-(AY/200+10)*2;//LX
+    Buf[1] = (AY/200+10)*2;//LX
     Buf[3] = 40-(GZ/200+10)*2;//RY
     NRF24L01_SendBuf(Buf);
     if(Key_GetNum() == 1)
