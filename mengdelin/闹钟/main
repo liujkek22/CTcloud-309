@@ -1,0 +1,313 @@
+#include <REG51.H>
+#include "LCD1602.h"
+#include "DC1302.h"
+#include "Key.h"
+#include "Timer0.h"
+#include "delay.h"
+sbit beep=P2^7;
+
+#define SPEED	1000
+
+#define P 		0
+#define L1 		1
+#define L1_ 	2
+#define L2 		3
+#define L2_ 	4
+#define L3 		5
+#define L4 		6
+#define L4_ 	7
+#define L5		8
+#define L5_ 	9
+#define L6 		10
+#define L6_ 	11
+#define L7		12
+#define M1 		13
+#define M1_ 	14
+#define M2 		15
+#define M2_ 	16
+#define M3 		17
+#define M4 		18
+#define M4_ 	19
+#define M5		20
+#define M5_ 	21
+#define M6 		22
+#define M6_ 	23
+#define M7		24
+#define H1 		25
+#define H1_ 	26
+#define H2 		27
+#define H2_ 	28
+#define H3 		29
+#define H4 		30
+#define H4_ 	31
+#define H5		32
+#define H5_ 	33
+#define H6 		34
+#define H6_ 	35
+#define H7		36
+
+unsigned char clock,KeyNum,MODE,TimeSetSelect,TimeSetFlashFlag,FreqSelect,MusicSelect;//<--'TimeSetFlashFlag'设置位闪烁标志
+
+unsigned int FreqTable[]={
+	0,
+	63628,63731,63835,63928,64021,64103,64185,64260,64331,64400,64463,64524,
+	64580,64633,64684,64732,64777,64820,64860,64898,64934,64968,65000,65030,
+	65058,65085,65110,65134,65157,65178,65198,65217,65235,65252,65268,65283,
+};
+
+unsigned char code Music[]={
+	//1
+	P,	4,
+	P,	4,
+	P,	4,
+	M6,	2,
+	M7,	2,
+	
+	H1,	4+2,
+	M7,	2,
+	H1,	4,
+	H3,	4,
+	
+	M7,	4+4+4,
+	M3,	2,
+	M3,	2,
+	
+	//2
+	M6,	4+2,
+	M5,	2,
+	M6, 4,
+	H1,	4,
+	
+	M5,	4+4+4,
+	M3,	4,
+	
+	M4,	4+2,
+	M3,	2,
+	M4,	4,
+	H1,	4,
+	
+	//3
+	M3,	4+4,
+	P,	2,
+	H1,	2,
+	H1,	2,
+	H1,	2,
+	
+	M7,	4+2,
+	M4_,2,
+	M4_,4,
+	M7,	4,
+	
+	M7,	8,
+	P,	4,
+	M6,	2,
+	M7,	2,
+	
+	//4
+	H1,	4+2,
+	M7,	2,
+	H1,	4,
+	H3,	4,
+	
+	M7,	4+4+4,
+	M3,	2,
+	M3,	2,
+	
+	M6,	4+2,
+	M5,	2,
+	M6, 4,
+	H1,	4,
+	
+	//5
+	M5,	4+4+4,
+	M2,	2,
+	M3,	2,
+	
+	M4,	4,
+	H1,	2,
+	M7,	2+2,
+	H1,	2+4,
+	
+	H2,	2,
+	H2,	2,
+	H3,	2,
+	H1,	2+4+4,
+	
+	//6
+	H1,	2,
+	M7,	2,
+	M6,	2,
+	M6,	2,
+	M7,	4,
+	M5_,4,
+	
+	
+	M6,	4+4+4,
+	H1,	2,
+	H2,	2,
+	
+	H3,	4+2,
+	H2,	2,
+	H3,	4,
+	H5,	4,
+	
+	//7
+	H2,	4+4+4,
+	M5,	2,
+	M5,	2,
+	
+	H1,	4+2,
+	M7,	2,
+	H1,	4,
+	H3,	4,
+	
+	H3,	4+4+4+4,
+};
+
+//按键按下改变MODE，然后根据按键的值切换两函数交替运行
+void TimeShow(void)
+{
+	DS1302_ReadTime();
+	LCD_ShowString(1,1,"TIME:");
+	LCD_ShowString(2,1,"CLOCK:");
+	LCD_ShowNum(1,7,DS1302_Time[0],2);			//HOUR
+	LCD_ShowNum(1,10,DS1302_Time[1],2);			//MINUTE
+	LCD_ShowNum(1,13,DS1302_Time[2],2);			//SECOND
+	LCD_ShowNum(2,7,DS1302_Time[3],2);			//CLOCKHOUR
+	LCD_ShowNum(2,10,DS1302_Time[4],2);			//CLOCKMINUTE
+	LCD_ShowNum(2,13,DS1302_Time[5],2);			//CLOCKSECOND
+	
+	
+}
+
+void TimeSet(void)
+{
+	if(KeyNum==2)
+	{
+		TimeSetSelect++;
+		TimeSetSelect%=6;					//越界取余清零
+		
+	}
+	if(KeyNum==3)							//按键3控制加
+	{
+		DS1302_Time[TimeSetSelect]++;
+		if(DS1302_Time[0]>23){DS1302_Time[0]=0;}
+		if(DS1302_Time[1]>59){DS1302_Time[1]=0;}
+		if(DS1302_Time[2]>59){DS1302_Time[2]=0;}
+		if(DS1302_Time[3]>23){DS1302_Time[3]=0;}
+		if(DS1302_Time[4]>59){DS1302_Time[4]=0;}
+		if(DS1302_Time[5]>59){DS1302_Time[5]=0;}
+	
+	}
+	if(KeyNum==4)							//按键4控制减
+	{
+		DS1302_Time[TimeSetSelect]--;
+		if(DS1302_Time[0]<0){DS1302_Time[0]=23;}
+		if(DS1302_Time[1]<0){DS1302_Time[1]=59;}
+		if(DS1302_Time[2]<0){DS1302_Time[2]=59;}
+		if(DS1302_Time[3]<0){DS1302_Time[3]=23;}
+		if(DS1302_Time[4]<0){DS1302_Time[4]=59;}
+		if(DS1302_Time[5]<0){DS1302_Time[5]=59;}
+
+	}
+	//修改完毕后，要对新数据进行更新并在设置时进行闪烁
+	if(TimeSetSelect==0 && TimeSetFlashFlag==1){LCD_ShowString(1,7,"  ");}	//如果选中要设置的位了，并且设置为一，那么就让他熄灭			
+	else {LCD_ShowNum(1,7,DS1302_Time[0],2);}
+	if(TimeSetSelect==1 && TimeSetFlashFlag==1){LCD_ShowString(1,10,"  ");}
+	else {LCD_ShowNum(1,10,DS1302_Time[1],2);}
+	if(TimeSetSelect==2 && TimeSetFlashFlag==1){LCD_ShowString(1,13,"  ");}
+	else {LCD_ShowNum(1,13,DS1302_Time[2],2);}
+	if(TimeSetSelect==3 && TimeSetFlashFlag==1){LCD_ShowString(2,7,"  ");}
+	else {LCD_ShowNum(2,7,DS1302_Time[3],2);}
+	if(TimeSetSelect==4 && TimeSetFlashFlag==1){LCD_ShowString(2,10,"  ");}
+	else {LCD_ShowNum(2,10,DS1302_Time[4],2);}
+	if(TimeSetSelect==5 && TimeSetFlashFlag==1){LCD_ShowString(2,13,"  ");}
+	else {LCD_ShowNum(2,13,DS1302_Time[5],2);}
+
+}
+
+void main()
+{
+	LCD_Init();
+	DS1302_Init();
+	Timer0_Init();
+	LCD_ShowString(1,7,"  :  :  ");
+	LCD_ShowString(2,7,"  :  :  ");
+	DS1302_SetTime();
+
+	while(1)
+	{
+		KeyNum=Key();						//让KwyNum接受key函数返回的值，也就是按下的独立按键
+		if(KeyNum==1)
+		{
+			clock=!clock;
+			if(MODE==0){MODE=1;TimeSetSelect=0;}
+			else if(MODE==1){MODE=0;DS1302_SetTime();}
+		}
+		switch(MODE)
+		{
+			case 0:TimeShow();break;
+			case 1:TimeSet();break;
+		}
+		
+		if(Music[MusicSelect]!=0xff)
+		{
+			FreqSelect=Music[MusicSelect];
+			MusicSelect++;
+			delay(SPEED/8*Music[MusicSelect]);
+			MusicSelect++;
+			TR0=0;
+			delay(5);
+			TR0=1;
+		}
+		else
+		{
+			TR0=0;
+			while(1);
+		}
+
+	}
+}
+
+
+void Timer0_Routine() interrupt 1
+{
+	static unsigned int T0Count;
+	IT0=0;
+	EX0=1;
+	EA=1;
+	if(FreqTable[FreqSelect])
+	{
+		TL0 = FreqTable[FreqSelect]%256;				
+		TH0 = FreqTable[FreqSelect]/256;
+		if(T0Count<1000)
+		{
+			T0Count++;
+			if(KeyNum==2)
+			{
+				clock=!clock;
+			}
+			if(clock==0)						//定时多少毫秒（T0Count>=的值）
+			{
+				T0Count=0,clock=0;
+				if(((DS1302_Time[0]==DS1302_Time[3])&&(DS1302_Time[1]==DS1302_Time[4]))||(DS1302_Time[1]==0)) //判断是否到达闹钟时间
+					{
+						beep=!beep;//蜂鸣器每隔1s响一次
+
+					}
+				else 	
+					beep=1;//关闭蜂鸣器
+		}	
+		else 
+			beep=1;//关闭蜂鸣器
+		}
+	}
+
+	
+	if(T0Count>=1000)						//定时多少毫秒（T0Count>=的值）
+	{
+		TimeSetFlashFlag=!TimeSetFlashFlag;
+	}
+	
+}
+
