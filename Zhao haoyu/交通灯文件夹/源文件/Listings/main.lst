@@ -1,0 +1,270 @@
+C51 COMPILER V9.54   MAIN                                                                  09/01/2023 10:11:37 PAGE 1   
+
+
+C51 COMPILER V9.54, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: D:\Keil_v5\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\main
+                    -.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include"REG52.H"
+   2          #include"intrins.h"
+   3          
+   4          #define uchar unsigned char
+   5          #define uint unsigned int
+   6          
+   7          uchar Tab[]={0x3F,0x06,0x5B,0x4F,0x66,0x6D,0x7D,0x07,0x7F,0x6F};
+   8          uchar nt=60,wt=60,sz=0,t,DJS=60,seg=60,tx=10;
+   9          bit ms=0;//???
+  10          
+  11          sbit k = P3^4;     
+  12          sbit g = P3^5;     
+  13          sbit a = P3^7;    
+  14          sbit j = P3^6;     
+  15          
+  16          sbit we1=P2^0;
+  17          sbit we2=P2^1;
+  18          
+  19          sbit NSG=P1^2;
+  20          sbit NSY=P1^1;
+  21          sbit NSR=P1^0;
+  22          sbit WEG=P1^5;
+  23          sbit WEY=P1^4;
+  24          sbit WER=P1^3;
+  25          
+  26          
+  27          
+  28          void delay(uint t);
+  29          void display();
+  30          void Init_Timer0(void);
+  31          void NST();
+  32          void WET();
+  33          void jstx();
+  34          void keycan();
+  35          
+  36          
+  37          void main()
+  38          {
+  39   1        Init_Timer0();
+  40   1        while(1)
+  41   1        {
+  42   2          if(sz==3)    
+  43   2          {
+  44   3          
+  45   3            seg=tx;    
+  46   3            jstx();    
+  47   3          }
+  48   2          if(sz==1)   
+  49   2          {seg=nt;}   
+  50   2          if(sz==2)   
+  51   2          {seg=wt;}   
+  52   2          if(sz==0)   
+  53   2          {
+  54   3            if(ms==0) 
+C51 COMPILER V9.54   MAIN                                                                  09/01/2023 10:11:37 PAGE 2   
+
+  55   3            {NST();}  
+  56   3            if(ms==1) 
+  57   3            {WET();}  
+  58   3          }
+  59   2          keycan();
+  60   2          display();
+  61   2        }
+  62   1        
+  63   1      }
+  64          
+  65          void delay(uint t)            
+  66          {
+  67   1        uchar x,y;
+  68   1        for(x=0;x<t;x++)    
+  69   1          for(y=0;y<200;y++);
+  70   1      }
+  71          
+  72          void display()
+  73          {
+  74   1          we1=0;
+  75   1          we2=1;  
+  76   1          P0=Tab[seg%10]; 
+  77   1          delay(5);  
+  78   1          P0=0x00;   
+  79   1          we1=1;     
+  80   1          we2=0;     
+  81   1          P0=Tab[seg/10]; 
+  82   1          delay(5);   
+  83   1          P0=0x00;    
+  84   1      }
+  85          
+  86          void Init_Timer0(void)
+  87          {
+  88   1        TMOD &= 0XF0;
+  89   1        TMOD |= 0x01;       
+  90   1        TH0=0x3c;       
+  91   1        TL0=0xb0;
+  92   1         IP=0x02;     
+  93   1        TR0=1;  
+  94   1        ET0=1;  
+  95   1         EA=1;  
+  96   1      }
+  97          
+  98          void timer0 (void) interrupt 1 //using 0
+  99          {
+ 100   1        TH0=0x3c; 
+ 101   1        TL0=0xb0;
+ 102   1        t++;        
+ 103   1        if(t==20) 
+ 104   1        {
+ 105   2          DJS--;   
+ 106   2          t=0;
+ 107   2          if(DJS<=5)
+ 108   2          {
+ 109   3            if(ms==1)    
+ 110   3            {NSY=~NSY;}  
+ 111   3            if(ms==0)    
+ 112   3            {WEY=~WEY;}  
+ 113   3            else(NSY||WEY==1);
+ 114   3          }
+ 115   2          if(DJS==0)      
+ 116   2          {
+C51 COMPILER V9.54   MAIN                                                                  09/01/2023 10:11:37 PAGE 3   
+
+ 117   3            ms=~ms;      
+ 118   3            NSY=1;       
+ 119   3            WEY=1;       
+ 120   3            if(ms==0)    
+ 121   3            {DJS=nt;}    
+ 122   3            if(ms==1)     
+ 123   3            {DJS=wt;}    
+ 124   3          }
+ 125   2          if(sz==3)  
+ 126   2          {
+ 127   3            tx--;  
+ 128   3            if(tx==0)
+ 129   3            {sz=0;}
+ 130   3          }
+ 131   2        } 
+ 132   1      }
+ 133          
+ 134          void WET()
+ 135          {
+ 136   1        seg=DJS;
+ 137   1        NSG=1;
+ 138   1        NSR=0;
+ 139   1        NSY=1;
+ 140   1        WER=1;
+ 141   1        WEG=0;
+ 142   1        WEY=1;
+ 143   1      }
+ 144          
+ 145          void NST()
+ 146          {
+ 147   1        seg=DJS;
+ 148   1        NSG=0;
+ 149   1        NSR=1;
+ 150   1        NSY=1;
+ 151   1              
+ 152   1        WER=0;
+ 153   1        WEG=1;
+ 154   1        WEY=1;
+ 155   1      }
+ 156          
+ 157          
+ 158          void jstx()
+ 159          {
+ 160   1        
+ 161   1        NSG=1;
+ 162   1        NSR=0;
+ 163   1        NSY=1;
+ 164   1        WEG=1;
+ 165   1        WER=0;
+ 166   1        WEY=1;
+ 167   1      
+ 168   1      }
+ 169          
+ 170          void keycan()
+ 171          {
+ 172   1        if(k==0)
+ 173   1        {
+ 174   2          delay(10);
+ 175   2          if(k==0)  
+ 176   2          {
+ 177   3            sz++; 
+ 178   3            if(sz==4) 
+C51 COMPILER V9.54   MAIN                                                                  09/01/2023 10:11:37 PAGE 4   
+
+ 179   3            {sz=0;}  
+ 180   3            if(sz==3) 
+ 181   3            {tx=10;} 
+ 182   3          }
+ 183   2          while(!k);
+ 184   2        }
+ 185   1        if(a==0&&sz==1) 
+ 186   1        {
+ 187   2          delay(10);
+ 188   2          if(a==0&&sz==1)
+ 189   2          {
+ 190   3            nt++;       
+ 191   3            if(nt==61) 
+ 192   3            {nt=1;}    
+ 193   3          }
+ 194   2          while(!a);  
+ 195   2        }
+ 196   1        if(a==0&&sz==2) 
+ 197   1        {
+ 198   2          delay(10);
+ 199   2          if(a==0&&sz==2)
+ 200   2          {
+ 201   3            wt++;
+ 202   3            if(wt==61)
+ 203   3            {wt=1;}
+ 204   3          }
+ 205   2          while(!a);
+ 206   2        }
+ 207   1        if(j==0&&sz==1)
+ 208   1        {
+ 209   2          delay(10);
+ 210   2          if(j==0&&sz==1)
+ 211   2          {
+ 212   3            nt--;
+ 213   3            if(nt==0)
+ 214   3            {nt=60;}
+ 215   3          }
+ 216   2          while(!j);
+ 217   2        }
+ 218   1        if(j==0&&sz==2)
+ 219   1        {
+ 220   2          delay(10);
+ 221   2          if(j==0&&sz==2)
+ 222   2          {
+ 223   3            wt--;
+ 224   3            if(wt==0)
+ 225   3            {wt=60;}
+ 226   3          }
+ 227   2          while(!j);
+ 228   2        }
+ 229   1        if(g==0)
+ 230   1        {
+ 231   2          delay(10);
+ 232   2          if(g==0)
+ 233   2          {sz=0;}    
+ 234   2          while(!g); 
+ 235   2        }
+ 236   1      }
+ 237          
+ 238          
+
+
+C51 COMPILER V9.54   MAIN                                                                  09/01/2023 10:11:37 PAGE 5   
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    438    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     17    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
