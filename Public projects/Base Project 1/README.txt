@@ -20,3 +20,7 @@
 2）基本要求（3）、（4）未得分不进行发挥部分（2）的测试。
 
 来源文档：https://blog.csdn.net/weixin_44908159/article/details/132073292
+实现参考：
+>https://blog.csdn.net/Holmes_G/article/details/132118168
+>https://zhuanlan.zhihu.com/p/647579330
+>https://blog.csdn.net/weixin_55207357/article/details/132200682
