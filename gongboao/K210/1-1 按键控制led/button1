@@ -1,0 +1,89 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# －－－－湖南创乐博智能科技有限公司－－－－
+#  文件名：07_button.py
+#  版本：V2.0
+#  author: zhulin
+# 说明：轻触按键实验
+#####################################################
+from maix import GPIO
+from fpioa_manager import fm
+import time
+
+# 零时变量
+tep1=1
+tep2=1
+# 初始化GPIO口
+def makerobo_setup():
+    global button
+    global p_R
+    global p_G
+    # CanMV 开发板引脚配置
+    fm.register(7, fm.fpioa.GPIO0, force=True)#控制灯
+    fm.register(8, fm.fpioa.GPIO1, force=True)
+    fm.register(6, fm.fpioa.GPIOHS0, force=True)#控制按键
+    fm.register(10,fm.fpioa.GPIOHS1, force=True)
+
+    # 配置引脚为输出
+    p_R = GPIO(GPIO.GPIO0, GPIO.OUT)
+    p_G = GPIO(GPIO.GPIO1, GPIO.OUT)
+    button1 = GPIO(GPIO.GPIOHS0, GPIO.IN, GPIO.PULL_UP) # 设置BtnPin管脚为输入模式，上拉至高电平(3.3V)
+    button2 = GPIO(GPIO.GPIOHS1, GPIO.IN, GPIO.PULL_UP)
+    # 中断函数，当轻触按键按下时，调用detect函数
+    button1.irq(makerobo_detect1, GPIO.IRQ_FALLING)#当出现下降沿时，会产生中断
+    button2.irq(makerobo_detect2, GPIO.IRQ_FALLING)
+# 双色LED模块驱动子函数
+def double_colorLED1():
+    global tep1
+    if tep1 == 1:
+        p_R.value(0) # 翻转电平
+        #p_G.value(1) # 翻转电平
+        tep1 = 0
+    else:
+        p_R.value(1) # 翻转电平
+        #p_G.value(0) # 翻转电平
+        tep1 = 1
+
+def double_colorLED2():
+    global tep2
+    if tep2 == 1:
+        #p_R.value(0) # 翻转电平
+        p_G.value(1) # 翻转电平
+        tep2 = 0
+    else:
+        #p_R.value(1) # 翻转电平
+        p_G.value(0) # 翻转电平
+        tep2 = 1
+
+
+# 打印函数，显示出按键按下
+def makerobo_Print(x):
+    if x == 0:
+        print('***************************************')
+        print('* makerobo K210 Kit Button1 Pressed!   *')
+        print('***************************************')
+
+def makerobo_Print(x):
+    if x == 0:
+        print('***************************************')
+        print('* makerobo K210 Kit Button2 Pressed!   *')
+        print('***************************************')
+
+# 中断函数，有按键按下时，响应中断函数
+def makerobo_detect1(button1):
+    double_colorLED1()     # 调用双色LED驱动函数
+    makerobo_Print(button1.value())       # 打印出GPIO的状态
+
+def makerobo_detect2(button2):
+    double_colorLED2()     # 调用双色LED驱动函数
+    makerobo_Print(button2.value())       # 打印出GPIO的状态
+
+# 循环函数，一个死循环
+def makerobo_loop():
+    while True:
+        pass
+
+# 程序入口
+if __name__ == '__main__':
+    makerobo_setup()           # 初始化GPIO口
+    makerobo_loop()            # 循环函数

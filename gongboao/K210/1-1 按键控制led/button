@@ -1,0 +1,63 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# －－－－湖南创乐博智能科技有限公司－－－－
+#  文件名：2.2_button.py
+#  版本：V2.0
+#  author: zhulin
+# 说明：板载方向按键实验
+#---------------------------------------
+import time
+from maix import GPIO
+from fpioa_manager import fm
+
+# CanMV 开发板引脚配置
+fm.register(6, fm.fpioa.GPIO0, force=True)
+fm.register(7, fm.fpioa.GPIO1, force=True)
+fm.register(8, fm.fpioa.GPIO2, force=True)
+fm.register(10, fm.fpioa.GPIO3, force=True)
+fm.register(11, fm.fpioa.GPIO4, force=True)
+fm.register(12, fm.fpioa.GPIO5, force=True)
+
+
+# 配置引脚为输出
+up_button=GPIO(GPIO.GPIO0, GPIO.IN, GPIO.PULL_UP)
+left_button=GPIO(GPIO.GPIO1, GPIO.IN, GPIO.PULL_UP)
+down_button=GPIO(GPIO.GPIO2, GPIO.IN, GPIO.PULL_UP)
+led_a = GPIO(GPIO.GPIO3, GPIO.OUT)
+led_b = GPIO(GPIO.GPIO4, GPIO.OUT)
+led_c = GPIO(GPIO.GPIO5, GPIO.OUT)
+
+state = ['up', 'left','down', 'right']  # 方向状态信息
+
+makerobo_up_status = 1
+makerobo_left_status = 1
+makerobo_down_status = 1
+makerobo_right_status = 1
+
+led_a.value(1)
+led_b.value(1)
+led_c.value(1)
+
+while True:
+    # up
+    makerobo_up_tmp = up_button.value()
+    if makerobo_up_tmp != makerobo_up_status:
+        if makerobo_up_tmp == 0:
+            led_a.value(0)
+        makerobo_up_status = makerobo_up_tmp
+
+    # left
+    makerobo_left_tmp = left_button.value()
+    if makerobo_left_tmp != makerobo_left_status:
+        if makerobo_left_tmp == 0:
+            led_b.value(0)
+        makerobo_left_status = makerobo_left_tmp
+
+    # down
+    makerobo_down_tmp = down_button.value()
+    if makerobo_down_tmp != makerobo_down_status:
+        if makerobo_down_tmp == 0:
+            led_c.value(0)
+        makerobo_down_status = makerobo_down_tmp
+
+    time.sleep_ms(20)
