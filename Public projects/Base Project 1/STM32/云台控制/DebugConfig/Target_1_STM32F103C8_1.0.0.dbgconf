@@ -7,6 +7,7 @@
 //   <o0.1>    DBG_STOP
 // <i> Debug Stop Mode
 // <i> 0: (FCLK=Off, HCLK=Off) Clock controller disables all clocks
+// <i> 1: (FCLK=On, HCLK=On) FCLK and HCLK are provided by the internal RC oscillator which remains active
 //   <o0.2>    DBG_STANDBY
 // <i> Debug Standby Mode
 // <i> 0: (FCLK=Off, HCLK=Off) The whole digital part is unpowered.
