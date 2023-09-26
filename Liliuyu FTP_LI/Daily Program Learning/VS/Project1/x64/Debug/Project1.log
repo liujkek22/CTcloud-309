@@ -1,0 +1,27 @@
+﻿  P137-1-5.6-2.c
+  P137-1-5.6-3.c
+  P137-2.c
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P137-2.c(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P137-2.c(16,33): warning C4474: printf: 格式字符串中传递的参数太多
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P137-2.c(16,33): message : 占位符和其参数预计 0 可变参数，但提供的却是 1 参数
+  P137-3.c
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P137-3.c(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P137-3.c(14,50): warning C4474: printf: 格式字符串中传递的参数太多
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P137-3.c(14,50): message : 占位符和其参数预计 0 可变参数，但提供的却是 1 参数
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P137-3.c(18,46): warning C4474: printf: 格式字符串中传递的参数太多
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P137-3.c(18,46): message : 占位符和其参数预计 0 可变参数，但提供的却是 1 参数
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P137-3.c(6,5): error C4996: 'scanf': This function or variable may be unsafe. Consider using scanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  P137-4.c
+  P137-6.c
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P137-6.c(4,8): warning C4101: “b”: 未引用的局部变量
+  P137-8.c
+  P138-11.c
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P138-11.c(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P138-11.c(10,12): error C2001: 常量中有换行符
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P138-11.c(11,5): error C2143: 语法错误: 缺少“)”(在“return”的前面)
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P138-11.c(10,12): warning C4473: “printf”: 没有为格式字符串传递足够的参数
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P138-11.c(10,12): message : 占位符和其参数预计 1 可变参数，但提供的却是 0 参数
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P138-11.c(10,12): message : 缺失的可变参数 1 为格式字符串“%f”所需
+  P138-16.c
+C:\Users\ATLAS\Desktop\VScode\test 2022 11.8\P138-16.c(1,1): warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  正在生成代码...

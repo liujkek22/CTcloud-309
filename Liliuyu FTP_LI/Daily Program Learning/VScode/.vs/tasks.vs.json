@@ -1,0 +1,15 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "任务-liliuyu12-01",
+      "appliesTo": "test 2022.12.2 sec/liliuyu12-01.c",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "任务-liliuyu12-01",
+      "appliesTo": "test 2022.12.2 sec/liliuyu12-01.c",
+      "type": "launch"
+    }
+  ]
+}
