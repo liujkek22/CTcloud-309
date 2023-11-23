@@ -1,0 +1,9 @@
+CMake Error at D:/ESPIDFF/esp-idf/tools/cmake/build.cmake:266 (message):
+  Failed to resolve component 'esp-dl'.
+Call Stack (most recent call first):
+  D:/ESPIDFF/esp-idf/tools/cmake/build.cmake:302 (__build_resolve_and_add_req)
+  D:/ESPIDFF/esp-idf/tools/cmake/build.cmake:595 (__build_expand_requirements)
+  D:/ESPIDFF/esp-idf/tools/cmake/project.cmake:464 (idf_build_process)
+  CMakeLists.txt:8 (project)
+
+
