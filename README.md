@@ -9,9 +9,9 @@
 
 2 仓库资料的主要内容
 - liuhutao:
-        1.STM32C8T6 学习资料和学习视频，相关内容可点击liuhutao查看。
-        2.esp32/esp32s3/docs-pdf----> python 使用手册
-        3.esp32/esp32s3/esp32s3-lvgl-资料包----> esp32s3-lvgl-基础资料包
+     - 1.STM32C8T6 学习资料和学习视频，相关内容可点击liuhutao查看。
+     - 2.esp32/esp32s3/docs-pdf----> python 使用手册
+     - 3.esp32/esp32s3/esp32s3-lvgl-资料包----> esp32s3-lvgl-基础资料包
         
     
 3 希望每一个参与309的人严格执行，不要吝啬时间和精力。
