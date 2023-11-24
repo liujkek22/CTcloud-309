@@ -16,7 +16,7 @@
     
 3 希望每一个参与309的人严格执行，不要吝啬时间和精力。
 
-资料上传记录：
-1.2023/8/21 上传stm32c8t6 学习资料和学习视频，相关内容可点击liuhutao查看。
-2,202311/11/23 上传esp32/esp32s3/docs-pdf----> python 使用手册
-3,202311/11/23 上传esp32/esp32s3/esp32s3-lvgl-资料包----> esp32s3-lvgl-基础资料包
+<font face="仿宋" color =red size=4>资料上传记录:</font>
+- 1.2023/8/21 上传stm32c8t6 学习资料和学习视频，相关内容可点击liuhutao查看。
+- 2.202311/11/23 上传esp32/esp32s3/docs-pdf----> python 使用手册
+- 3.202311/11/23 上传esp32/esp32s3/esp32s3-lvgl-资料包----> esp32s3-lvgl-基础资料包
