@@ -18,8 +18,8 @@ void PWM_Init(void)
 		TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;
 		TIM_TimeBaseInitStructure.TIM_ClockDivision =TIM_CKD_DIV1;//时钟分频模式为一分频（不分频）
 		TIM_TimeBaseInitStructure.TIM_CounterMode =TIM_CounterMode_Up;//时钟计数模式为向上计数模式
-		TIM_TimeBaseInitStructure.TIM_Period = 20000 - 1;//设置ARR的值
-		TIM_TimeBaseInitStructure.TIM_Prescaler = 72 - 1;//设置PSC的值
+		TIM_TimeBaseInitStructure.TIM_Period = 2000 - 1;//设置ARR的值
+		TIM_TimeBaseInitStructure.TIM_Prescaler = 720 - 1;//设置PSC的值
 		TIM_TimeBaseInitStructure.TIM_RepetitionCounter =0;//重复计数器，应TIM2为通用计数器，没有重复计数器则不启用
 		TIM_TimeBaseInit(TIM2, &TIM_TimeBaseInitStructure);
 		
@@ -38,26 +38,6 @@ void PWM_Init(void)
     }
 }
 
-void PWM_SetCompare1(uint16_t Compare)
-{
-	TIM_SetCompare1(TIM2,Compare);//在运行过程中更改CCR的值
-}
-
-
-void PWM_SetCompare2(uint16_t Compare)
-{
-	TIM_SetCompare2(TIM2,Compare);//在运行过程中更改CCR的值
-}
-
-void PWM_SetCompare3(uint16_t Compare)
-{
-	TIM_SetCompare3(TIM2,Compare);//在运行过程中更改CCR的值
-}
-
-void PWM_SetCompare4(uint16_t Compare)
-{
-	TIM_SetCompare4(TIM2,Compare);//在运行过程中更改CCR的值
-}
 /*
 PWM频率 Freq=时钟频率/（PSC+1）/（ARR+1）
 PWM占空比 Duty=CCR/(ARR+1)

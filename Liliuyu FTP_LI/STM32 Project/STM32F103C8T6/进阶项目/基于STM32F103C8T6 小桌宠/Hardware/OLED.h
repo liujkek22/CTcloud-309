@@ -10,7 +10,7 @@ void OLED_ShowSignedNum(uint8_t Line, uint8_t Column, int32_t Number, uint8_t Le
 void OLED_ShowHexNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length);
 void OLED_ShowBinNum(uint8_t Line, uint8_t Column, uint32_t Number, uint8_t Length);
 void OLED_ShowChineseString(uint8_t Line, uint8_t Column, uint8_t Start, uint8_t End);
-void OLED_ShowPicture(uint8_t Line, uint8_t Column, uint8_t x, uint8_t y);
+void OLED_ShowPicture(uint8_t Line, uint8_t Column, uint8_t x, uint8_t y,uint8_t Start);
 void OLED_ShowGIF(uint8_t Num);
-
+void OLED_ShowMyPicture(uint8_t Line, uint8_t Column, uint8_t x, uint8_t y,uint8_t Start);
 #endif

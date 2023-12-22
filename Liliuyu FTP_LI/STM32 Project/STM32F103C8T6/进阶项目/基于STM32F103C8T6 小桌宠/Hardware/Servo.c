@@ -10,20 +10,32 @@ void Servo_Init(void)
 
 void Servo1_SetAngle(float Angle)
 {
-	PWM_SetCompare1(Angle / 180 * 2000 + 500);
+    if(Angle>=0||Angle<=180)
+    {
+        TIM_SetCompare1(TIM2,50+(200*Angle/180));
+    }
 }
 
 void Servo2_SetAngle(float Angle)
 {
-	PWM_SetCompare2(Angle / 180 * 2000 + 500);
+	if(Angle>=0||Angle<=180)
+    {
+        TIM_SetCompare2(TIM2,50+(200*Angle/180));
+    }
 }
 
 void Servo3_SetAngle(float Angle)
 {
-	PWM_SetCompare3(Angle / 180 * 2000 + 500);
+	if(Angle>=0||Angle<=180)
+    {
+        TIM_SetCompare3(TIM2,50+(200*Angle/180));
+    }
 }
 
 void Servo4_SetAngle(float Angle)
 {
-	PWM_SetCompare4(Angle / 180 * 2000 + 500);
+	if(Angle>=0||Angle<=180)
+    {
+        TIM_SetCompare4(TIM2,50+(200*Angle/180));
+    }
 }

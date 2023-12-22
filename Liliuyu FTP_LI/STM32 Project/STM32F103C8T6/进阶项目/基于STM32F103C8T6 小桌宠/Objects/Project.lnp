@@ -32,6 +32,7 @@
 ".\objects\servo.o"
 ".\objects\nrf24l01.o"
 ".\objects\final.o"
+".\objects\led.o"
 ".\objects\main.o"
 ".\objects\stm32f10x_it.o"
 --library_type=microlib --strict --scatter ".\Objects\Project.sct"

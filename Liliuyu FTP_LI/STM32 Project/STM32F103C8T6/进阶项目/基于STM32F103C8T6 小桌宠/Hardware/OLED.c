@@ -358,11 +358,11 @@ void OLED_ShowChineseString(uint8_t Line, uint8_t Column, uint8_t Start, uint8_t
   * @param   y 图片纵向像素，y<=64
   * @retval  无
   */
-void OLED_ShowPicture(uint8_t Line, uint8_t Column, uint8_t x, uint8_t y)
+void OLED_ShowPicture(uint8_t Line, uint8_t Column, uint8_t x, uint8_t y,uint8_t Start)
 {
 	uint8_t i=0;
 	uint8_t j=0;
-	uint16_t addr=0;
+	uint16_t addr=1024*Start;
 	
 	for(i=Line;i<(y/8)+Line;i++)
 	{
@@ -401,3 +401,19 @@ void OLED_ShowGIF(uint8_t Num)
 	}
 }
 
+void OLED_ShowMyPicture(uint8_t Line, uint8_t Column, uint8_t x, uint8_t y,uint8_t Start)
+{
+	uint8_t i=0;
+	uint8_t j=0;
+	uint16_t addr=1024*Start;
+	
+	for(i=Line;i<(y/8)+Line;i++)
+	{
+		OLED_SetCursor(i-1,Column-1);
+		for(j=0;j<x;j++)
+		{
+			OLED_WriteData(OLED_MyPicture[addr]);
+			addr+=1;
+		}
+	}
+}

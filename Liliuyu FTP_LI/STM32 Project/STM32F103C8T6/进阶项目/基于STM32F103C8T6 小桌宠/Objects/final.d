@@ -34,3 +34,4 @@
 .\objects\final.o: Hardware\key.h
 .\objects\final.o: Hardware\final.h
 .\objects\final.o: .\System\Delay.h
+.\objects\final.o: Hardware\LED.h
