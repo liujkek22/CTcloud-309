@@ -1,5 +1,0 @@
-1.学习和使用stm32 单片机入门资料，推荐目录如下，推荐使用开发板如下：stm32c8t6，是非常适合新手的嵌入式设备学习视频，讲解有理有据，非常好！
-website:https://www.bilibili.com/video/BV1th411z7sn/?spm_id_from=333.337.search-card.all.click&vd_source=8160739796b387fde3fcd7c75daccf5d
-资料链接：https://jiangxiekeji.com/download.html
-
-
