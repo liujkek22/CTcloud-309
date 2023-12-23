@@ -15,7 +15,7 @@ liuhutao:
 - liuhutao/带你学esp8266/README.md包含该模块基本学习资料
 - esp32/esp32s3/docs-pdf---->python使用手册->[python官网](www.python.org)
 - esp32/esp32s3/esp32s3-lvgl-资料包----> esp32s3-lvgl-基础资料包
-- lvgl8.3在esp32s3 系列环境搭建参考up组：ESP-IDF+vscode教程//持续更新-第二个B站用户-稍后再看-哔哩哔哩视频 (bilibili.com)
+- lvgl8.3在esp32s3 系列环境搭建参考[夏尔-Shieru](https://www.bilibili.com/list/watchlater?oid=615523646&bvid=BV1ah4y177mR&spm_id_from=333.1007.top_right_bar_window_view_later.content.click)
 - liuhutao/计算机经典书籍，书不在多，坚持才是胜利。
 
 ---
