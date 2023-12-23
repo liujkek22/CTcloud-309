@@ -8,9 +8,9 @@
 - 额，慢慢改吧！
 - 强调：仓库维护成员请安下列形式修改自己的共享资料格式！
 
-2 **仓库资料的主要内容**
+# 2 **仓库资料的主要内容**
 
-liuhutao:
+## liuhutao:
 
 - liuhutao/带你学esp8266/README.md包含该模块基本学习资料
 - esp32/esp32s3/docs-pdf---->python使用手册->[python官网](www.python.org)
@@ -20,7 +20,9 @@ liuhutao:
 
 ---
 
+## PCB
 
+* PCB/README.md
 
 3 希望每一个参与309的人严格执行，不要吝啬时间和精力。
 
